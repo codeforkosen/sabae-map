@@ -1,6 +1,7 @@
 # sabae-map
 
-[第33回 高専プロコン用 鯖江マップ](https://codeforkosen.github.io/sabae-map/)
+- [第33回 高専プロコン用 鯖江マップ](https://codeforkosen.github.io/sabae-map/)
+- [鯖江ラーメンマップ](https://codeforkosen.github.io/sabae-map/csvmap.html)
 
 ## 編集方法
 

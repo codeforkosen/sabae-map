@@ -11,9 +11,9 @@ for (const cate of cates) {
   const d = data.filter(d => d.category == cate);
   await Deno.writeTextFile("cate/" + cate + ".csv", CSV.stringify(d));
   const html = `<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
-<title>${cate}鯖江マップ</title>
+<title>鯖江${cate}マップ</title>
 </head><body>
-<h1>${cate}鯖江マップ</h1>
+<h1>鯖江${cate}マップ</h1>
 <script type="module" src="https://code4fukui.github.io/csv-map/csv-map.js"></script>
 <csv-map src="./${cate}.csv"></csv-map>
 <a href=../csvmap.html>全部</a>、
