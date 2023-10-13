@@ -10,15 +10,20 @@ import { ArrayUtil } from "https://js.sabae.cc/ArrayUtil.js";
 import { Geo3x3 } from "https://geo3x3.com/Geo3x3.js";
 
 const modelmap = {
-  "カフェ": "./model/pin-yellow.glb",
+  "カフェ": "./model/ps-cake.glb",
   "飲食": "./model/pin-green.glb",
   "POI": "./model/pin-red.glb",
   "コンビニ": "./model/pin-skyblue.glb",
   "ラーメン": "./model/pin-purple.glb",
+  "遊び場": "./model/ps-frog.glb",
 };
 
 const url = "./sabae.csv";
 const data = await CSV.fetchJSON(url);
+
+const cates = ArrayUtil.toUnique(data.map(d => d.category));
+console.log(cates);
+
 data.forEach(d => {
   if (d.geo3x3) {
     const pos = Geo3x3.decode(d.geo3x3);
@@ -32,6 +37,7 @@ data.forEach(d => {
     if (m) {
       d.model = m;
     } else {
+      console.log(d.category);
       d.model = "./model/pin-red.glb";
     }
   }
