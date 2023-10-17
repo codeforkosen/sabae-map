@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
+<title>鯖江マップ</title>
+</head>
+<body style="background-color: #224;">
+<script type="module">
+import { deck } from 'https://code4fukui.github.io/deck-es/deck.js';
+import { GsiTerrainLayer } from 'https://code4fukui.github.io/deckgl-gsi-terrain-layer/index.js';
+import { CSV } from "https://js.sabae.cc/CSV.js";
+import { ArrayUtil } from "https://js.sabae.cc/ArrayUtil.js";
+import { Geo3x3 } from "https://geo3x3.com/Geo3x3.js";
+
+const modelmap = {
+  "カフェ": "./model/ps-cake.glb",
+  "飲食": "./model/pin-green.glb",
+  "POI": "./model/pin-red.glb",
+  "コンビニ": "./model/pin-skyblue.glb",
+  "ラーメン": "./model/pin-purple.glb",
+  "遊び場": "./model/ps-frog.glb",
+  "ショップ": "./model/pin-yellow.glb",
+  "消火栓": "./model/firehydrant.glb",
+};
+
+//const sizeScale = 1000;
+const sizeScale = 200;
+
+const url = "./sabae-firehydrant.csv";
+const data = await CSV.fetchJSON(url);
+
+data.forEach(d => d.category = "消火栓");
+
+const cates = ArrayUtil.toUnique(data.map(d => d.category));
+console.log(cates);
+
+data.forEach(d => {
+  if (d.geo3x3) {
+    const pos = Geo3x3.decode(d.geo3x3);
+    d.coordinates = [pos.lng, pos.lat];
+  } else if (d.lat && d.lng) {
+    d.coordinates = [parseFloat(d.lng), parseFloat(d.lat)];
+  } else if (d.緯度 && d.経度) {
+    d.coordinates = [parseFloat(d.経度), parseFloat(d.緯度)];
+  }
+
+  if (!d.model) {
+    const m = modelmap[d.category];
+    if (m) {
+      d.model = m;
+    } else {
+      console.log(d.category);
+      d.model = "./model/pin-red.glb";
+    }
+  }
+});
+
+const tooltipHandler = (e) => {
+  if (!e || !e.object) {
+    return null;
+  }
+  const obj = e.object;
+  const trs = Object.keys(obj)
+    .filter(key => obj[key])
+    .map(key => `<tr><th style="text-align:right">${key}</th><td>${obj[key]}</td></tr>`);
+  const html = ["<table>", ...trs, "</table>"].join("");
+  return {
+    html,
+    style: {
+      fontSize: "0.5em"
+    }
+  };
+};
+
+const models = ArrayUtil.toUnique(data.map(d => d.model));
+
+const layers = [];
+
+for (const model of models) {
+  const data1 = data.filter(d => d.model == model);
+  const layer1 = new deck.ScenegraphLayer({
+    id: "id" + model,
+    data: data1,
+    pickable: true,
+    // scenegraph: d => d.model, // NG
+    scenegraph: model,
+    //scenegraph: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/BoxAnimated/glTF-Binary/BoxAnimated.glb',
+    getPosition: d => d.coordinates,
+    getOrientation: d => [0, 0, 90],
+    getTranslation: d => [0, 0, 20],
+    //getOrientation: d => [0, Math.random() * 180, 90],
+    //_animations: { '*': { speed: 5 } },
+    sizeScale,
+    _lighting: 'pbr',
+    //onClick: e => window.open(e.object.URL, "_blank"),
+  });
+  layers.push(layer1);  
+}
+
+layers.push(new GsiTerrainLayer());
+
+let isHovering = false;
+
+new deck.Deck({
+  initialViewState: {
+    longitude: 136.1886,
+    latitude: 35.9433,
+    //zoom: 6,
+    zoom: 15,
+    bearing: 0,
+    pitch: 45,
+    maxPitch: 85,
+  },
+  controller: true,
+  layers,
+  onHover: e => isHovering = Boolean(e.object),
+  getCursor: e => e.isDragging ? 'grabbing' : (isHovering ? 'pointer' : 'grab'),
+  getTooltip: tooltipHandler,
+});
+</script>
+
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+</style>
+
+</body>
+</html>
