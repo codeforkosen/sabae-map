@@ -2,6 +2,7 @@
 
 - [第33回 高専プロコン用 鯖江マップ](https://codeforkosen.github.io/sabae-map/)
 - [鯖江ラーメンマップ](https://codeforkosen.github.io/sabae-map/csvmap.html)
+- [鯖江消火栓マップ](https://codeforkosen.github.io/sabae-map/firehydrant.html)
 
 ## 編集方法
 
