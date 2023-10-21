@@ -17,6 +17,8 @@ const modelmap = {
   "ラーメン": "./model/pin-purple.glb",
   "遊び場": "./model/ps-frog.glb",
   "ショップ": "./model/pin-yellow.glb",
+  "ファストフード": "./model/ps-berger.glb",
+  //"ファストフード": "./model/ps-potato.glb",
 };
 
 const url = "./sabae.csv";
@@ -41,6 +43,9 @@ data.forEach(d => {
       console.log(d.category);
       d.model = "./model/pin-red.glb";
     }
+  }
+  if (d.model.startsWith("./model/pin-")) {
+    d.scale = 500;
   }
 });
 
@@ -79,7 +84,7 @@ for (const model of models) {
     getTranslation: d => [0, 0, 20],
     //getOrientation: d => [0, Math.random() * 180, 90],
     //_animations: { '*': { speed: 5 } },
-    sizeScale: 1000,
+    sizeScale: data1[0].scale || 1000,
     _lighting: 'pbr',
     //onClick: e => window.open(e.object.URL, "_blank"),
   });
